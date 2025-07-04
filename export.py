@@ -1,74 +1,112 @@
 import csv
+import os
+import inspect
+import importlib
+from typing import Dict, List, Any, Optional
 
-def export_to_csv(data, num_examples=5):
-    """Export data to CSV files with specified number of examples"""
+def get_class_attributes(cls) -> List[str]:
+    """Extract attribute names from a class's __init__ method"""
+    init_signature = inspect.signature(cls.__init__)
+    # Skip 'self' parameter and return all other parameter names
+    return [param for param in init_signature.parameters.keys() if param != 'self']
+
+def get_object_attributes(obj, attributes: List[str]) -> List[Any]:
+    """Extract attributes from an object in the specified order"""
+    return [getattr(obj, attr) for attr in attributes]
+
+def get_available_classes() -> Dict[str, type]:
+    """Automatically discover all available model classes from the models module"""
+    import models
     
-    # Create example_data folder if it doesn't exist
-    import os
-    os.makedirs('example_data', exist_ok=True)
+    classes = {}
+    for name, obj in inspect.getmembers(models):
+        # Only include classes (not functions, modules, etc.)
+        if inspect.isclass(obj) and obj.__module__ == 'models':
+            # Convert class name to entity type (e.g., User -> users, TicketValidation -> validations)
+            entity_type = name.lower()
+            if entity_type.endswith('validation'):
+                entity_type = entity_type.replace('validation', 'validations')
+            elif not entity_type.endswith('s'):
+                entity_type += 's'
+            
+            classes[entity_type] = obj
     
-    # Users CSV
-    with open('example_data/users.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['user_id', 'username', 'first_name', 'last_name', 'email', 'phone_number', 'interested_event_ids'])
-        for user in data['users'][:num_examples]:
-            writer.writerow([user.user_id, user.username, user.first_name, user.last_name, user.email, user.phone_number, user.interested_event_ids])
+    return classes
+
+def export_single_csv(data: List[Any], entity_type: str, output_dir: str, num_examples: int) -> Optional[str]:
+    """Export a single CSV file with automatic attribute detection"""
+    if not data:
+        print(f"Warning: No data found for {entity_type}")
+        return None
     
-    # Artists CSV
-    with open('example_data/artists.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['artist_id', 'first_name', 'last_name', 'artist_name', 'biography', 'country'])
-        for artist in data['artists'][:num_examples]:
-            writer.writerow([artist.artist_id, artist.first_name, artist.last_name, artist.artist_name, artist.biography, artist.country])
+    # Get the class for this entity type
+    classes = get_available_classes()
+    if entity_type not in classes:
+        print(f"Warning: Unknown entity type '{entity_type}'")
+        return None
     
-    # Venues CSV
-    with open('example_data/venues.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['venue_id', 'venue_name', 'venue_description', 'address', 'city', 'country', 'capacity'])
-        for venue in data['venues'][:num_examples]:
-            writer.writerow([venue.venue_id, venue.venue_name, venue.venue_description, venue.address, venue.city, venue.country, venue.capacity])
+    cls = classes[entity_type]
+    attributes = get_class_attributes(cls)
     
-    # Promoters CSV
-    with open('example_data/promoters.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['promoter_id', 'promoter_name', 'promoter_email', 'promoter_phone_number'])
-        for promoter in data['promoters'][:num_examples]:
-            writer.writerow([promoter.promoter_id, promoter.promoter_name, promoter.promoter_email, promoter.promoter_phone_number])
+    # Create filename (pluralize entity type)
+    filename = f"{entity_type}.csv"
+    filepath = os.path.join(output_dir, filename)
     
-    # Events CSV
-    with open('example_data/events.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['event_id', 'event_name', 'description', 'promoter_id', 'owner_id', 'event_admin_ids', 'artist_ids', 'start_date', 'end_date', 'venue_id', 'total_tickets', 'tickets_sold'])
-        for event in data['events'][:num_examples]:
-            writer.writerow([event.event_id, event.event_name, event.description, event.promoter_id, event.owner_id, event.event_admin_ids, event.artist_ids, event.start_date, event.end_date, event.venue_id, event.total_tickets, event.tickets_sold])
+    try:
+        with open(filepath, 'w', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(attributes)
+            
+            # Write data rows (limited by num_examples)
+            for item in data[:num_examples]:
+                row_data = get_object_attributes(item, attributes)
+                writer.writerow(row_data)
+        
+        return filename
+    except Exception as e:
+        print(f"Error exporting {filename}: {e}")
+        return None
+
+def export_to_csv(data: Dict[str, List[Any]], num_examples: int = 5, output_dir: str = 'example_data') -> None:
+    """
+    Export data to CSV files with automatic configuration
     
-    # Tickets CSV
-    with open('example_data/tickets.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['ticket_id', 'event_id', 'owner_user_id', 'ticket_type'])
-        for ticket in data['tickets'][:num_examples]:
-            writer.writerow([ticket.ticket_id, ticket.event_id, ticket.owner_user_id, ticket.ticket_type])
+    Args:
+        data: Dictionary containing data lists for each entity type
+        num_examples: Number of examples to export per file
+        output_dir: Directory to save CSV files
+    """
+    # Create output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
     
-    # Sales CSV
-    with open('example_data/sales.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['sale_id', 'ticket_id', 'buyer_user_id', 'sale_date', 'price'])
-        for sale in data['sales'][:num_examples]:
-            writer.writerow([sale.sale_id, sale.ticket_id, sale.buyer_user_id, sale.sale_date, sale.price])
+    # Track successful exports
+    successful_exports = []
+    failed_exports = []
     
-    # Validations CSV
-    with open('example_data/validations.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['validation_id', 'ticket_id', 'validator_user_id', 'validation_time'])
-        for validation in data['validations'][:num_examples]:
-            writer.writerow([validation.validation_id, validation.ticket_id, validation.validator_user_id, validation.validation_time])
+    # Export each data type automatically
+    for entity_type, entity_data in data.items():
+        result = export_single_csv(entity_data, entity_type, output_dir, num_examples)
+        
+        if result:
+            successful_exports.append(result)
+        else:
+            failed_exports.append(entity_type)
     
-    print(f"\nCSV files created in example_data/ folder with {num_examples} examples each:")
-    print("- example_data/users.csv")
-    print("- example_data/artists.csv") 
-    print("- example_data/venues.csv")
-    print("- example_data/promoters.csv")
-    print("- example_data/events.csv")
-    print("- example_data/tickets.csv")
-    print("- example_data/sales.csv")
-    print("- example_data/validations.csv")
+    # Print results
+    print(f"\nCSV export completed:")
+    print(f"- Output directory: {output_dir}")
+    print(f"- Examples per file: {num_examples}")
+    
+    if successful_exports:
+        print(f"\nSuccessfully exported {len(successful_exports)} files:")
+        for filename in successful_exports:
+            print(f"  - {filename}")
+    
+    if failed_exports:
+        print(f"\nFailed to export {len(failed_exports)} files:")
+        for entity_type in failed_exports:
+            print(f"  - {entity_type}")
+    
+    # Print available entity types for reference
+    available_classes = get_available_classes()
+    print(f"\nAvailable entity types: {', '.join(available_classes.keys())}")

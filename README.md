@@ -13,3 +13,12 @@ Generator of synthetic ticketing platform data
    ```bash
    python generate_data.py
    ```
+
+TO DO:
+
+- Cnan i represent this data mermaid js
+- Improve mock data - can I LLM generate the bios
+- Improve Ticket relationship
+- Improve Pomoroter - admin relationship
+- is there a library to create the csvs?
+- look for generator libraries
