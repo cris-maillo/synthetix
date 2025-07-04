@@ -1,5 +1,6 @@
 # synthetix
 Generator of synthetic ticketing platform data
+~ vibe coded ~
 
 ## Usage
 

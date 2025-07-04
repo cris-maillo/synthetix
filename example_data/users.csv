@@ -1,0 +1,3 @@
+user_id,username,first_name,last_name,email,phone_number,interested_event_ids
+1,cardenaslucas,Stephanie,Carter,adamfuller@example.net,779-841-2705,"[92, 89, 63, 2]"
+2,thomas95,Mckenzie,Murphy,jacobfuller@example.net,(207)477-7373x217,"[92, 96, 32]"

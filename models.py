@@ -50,10 +50,11 @@ class Promoter:
         self.promoter_phone_number = promoter_phone_number
 
 class Ticket:
-    def __init__(self, ticket_id, event_id, owner_user_id):
+    def __init__(self, ticket_id, event_id, owner_user_id, ticket_type):
         self.ticket_id = ticket_id
         self.event_id = event_id
         self.owner_user_id = owner_user_id
+        self.ticket_type = ticket_type
 
 class Sale:
     def __init__(self, sale_id, ticket_id, buyer_user_id, sale_date, price):
@@ -69,4 +70,3 @@ class TicketValidation:
         self.ticket_id = ticket_id
         self.validator_user_id = validator_user_id
         self.validation_time = validation_time
-        
