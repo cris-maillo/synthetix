@@ -31,20 +31,22 @@ def generate_events(n, users, artists, venues, promoters):
     events = []
     for i in range(n):
         event_name = fake.catch_phrase()
-        description = fake.text(max_nb_chars=200)
+        genre = random.choice(["House", "Techno", "Electro", "Trance"])
+        venue = random.choice(venues)
+        description = f"A night of {genre} featuring {random.choice(artists).artist_name} at {venue.venue_name}"
         owner = random.choice(users)
+        promoter_id = random.choice(promoters)
         admin_ids = list({owner.user_id} | {random.choice(users).user_id for _ in range(random.randint(1, 3))})
         artist_ids = [random.choice(artists).artist_id for _ in range(random.randint(1, 4))]
         start_date = fake.date_time_between(start_date='now', end_date='+90d')
         end_date = fake.date_time_between(start_date=start_date, end_date='+90d')
-        venue = random.choice(venues)
         total_tickets = random.randint(50, 500)
         tickets_sold = random.randint(0, total_tickets)
         events.append(Event(
             event_id=i+1,
             event_name=event_name,
             description=description,
-            promoter_id=random.choice(promoters).promoter_id,
+            promoter_id=promoter_id,
             owner_id=owner.user_id,
             event_admin_ids=admin_ids,
             artist_ids=artist_ids,
