@@ -35,4 +35,25 @@ Overall, I'm quite happy with my vibe coding start - it got me started - which a
 
 
 ## 13th of July
-Can I vibe code architecture/data modelling exercises? Yes, mermaid JS
+I did a quick vibe code of the data model using MermaidJS and draw.io (I also found out that Github can parse MermaidJS which is cool!). But I think I want to put a bit more thought into it.
+
+## 2nd of August
+Back to basics, what is my first step?
+From what I can recall from Uni & training, there are 3 main models, but I do wonder if this is a bit passé:
+1. Conceptual Model: also known as domain models, big-picture view of the system. Focus on entities/classes and their relationships & constraints between them.
+2. Logical Model: includes attributes and data types
+3. Physical Data Model: finalised design, includes associative tables and primary & foreign keys.
+
+At this point, I'm moving on to pen and paper but I will hopefully create .md files for each stage and any iteration.
+
+For the conceptual model, I'll be first listing the entities:
+1. Event (I will have to consider if I'd want and how to enable multi-day events or series)
+2. Customer
+3. Artist
+4. Promoter
+5. Venue Manager
+6. Venue
+7. Ticket
+8. Sale (ChatGPT recommends separating Sale/Order from Payment, but I will keep them together for now)
+
+And creating relationships in an ERD which can be seen in the final Conceptual ERD.
