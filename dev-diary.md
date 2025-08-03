@@ -57,3 +57,6 @@ For the conceptual model, I'll be first listing the entities:
 8. Sale (ChatGPT recommends separating Sale/Order from Payment, but I will keep them together for now)
 
 And creating relationships in an ERD which can be seen in the final Conceptual ERD.
+
+## 3nd of August
+Let's move on to the logical data model, adding attributes and data types.
