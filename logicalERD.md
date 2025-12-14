@@ -7,82 +7,82 @@ config:
 ---
 classDiagram
   class Event {
-    +INTEGER eventID
-    +VARCHAR(255) name
-    +TEXT description
-    +DATETIME startDateTime
-    +DATETIME endDateTime
+    +int eventID
+    +String name
+    +String description
+    +Datetime startDatetime
+    +Datetime endDatetime
   }
   class Artist {
-    +INTEGER artistID
-    +VARCHAR(255) artistName
-    +VARCHAR(255) name
-    +TEXT bio
-    +TEXT socialLinks
+    +int artistID
+    +String artistName
+    +String name
+    +String bio
+    +String socialLinks
   }
   class Promoter {
-    +INTEGER promoterID
-    +VARCHAR(255) name
-    +TEXT description
+    +int promoterID
+    +String name
+    +String description
   }
   class Customer {
-    +INTEGER customerID
-    +VARCHAR(100) username
-    +VARCHAR(255) email
-    +VARCHAR(255) name
+    +int customerID
+    +String username
+    +String email
+    +String name
   }
   class Sale {
-    +INTEGER saleID
-    +DATETIME saleDateTime
-    +DECIMAL(10,2) totalPrice
+    +int saleID
+    +Datetime saleDatetime
+    +double totalPrice
   }
   class Ticket {
-    +INTEGER ticketID
-    +VARCHAR(50) status
-    +VARCHAR(100) ticketType
-    +DECIMAL(10,2) price
+    +int ticketID
+    +String status
+    +String ticketType
+    +double price
   }
   class Venue {
-    +INTEGER venueID
-    +VARCHAR(255) name
-    +VARCHAR(500) address
-    +VARCHAR(100) city
-    +VARCHAR(100) country
-    +INTEGER capacity
-    +TEXT description
+    +int venueID
+    +String name
+    +String address
+    +String city
+    +String country
+    +int capacity
+    +String description
   }
   class VenueManager {
-    +INTEGER venueManagerID
-    +VARCHAR(255) email
-    +VARCHAR(100) firstName
-    +VARCHAR(100) lastName
+    +int venueManagerID
+    +String email
+    +String firstName
+    +String lastName
   }
   class EventArtist {
-    +INTEGER eventID
-    +INTEGER artistID
+    +int eventID
+    +int artistID
   }
 
   class EventPromoter {
-    +INTEGER eventID
-    +INTEGER promoterID
+    +int eventID
+    +int promoterID
   }
 
   class CustomerArtistFollow {
-    +INTEGER customerID
-    +INTEGER artistID
-    +DATETIME follow_date
+    +int customerID
+    +int artistID
+    +Datetime follow_date
   }
 
   class CustomerVenueFollow {
-    +INTEGER customerID
-    +INTEGER venue_id
-    +DATETIME follow_date
+    +int customerID
+    +int venue_id
+    +Datetime follow_date
   }
 
   class CustomerEventInterest {
-    +INTEGER customerID
-    +INTEGER eventID
-    +DATETIME interest_date
+    +int customerID
+    +int eventID
+    +Datetime interest_date
   }
   Event "*" -- "1...*" Artist : hosts
   Promoter "*" -- "*" Event : manages
