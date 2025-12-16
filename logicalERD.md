@@ -7,99 +7,147 @@ config:
 ---
 classDiagram
   class Event {
-    +int eventID
-    +String name
-    +String description
-    +Datetime startDatetime
-    +Datetime endDatetime
+    int eventID
+    String name
+    String description
+    Datetime startDatetime
+    Datetime endDatetime
+    String status
+    int venueID
+    Datetime createdAt
+    Datetime updatedAt
   }
+
   class Artist {
-    +int artistID
-    +String artistName
-    +String name
-    +String bio
-    +String socialLinks
+    int artistID
+    String displayName
+    String legalName
+    String bio
+    Datetime createdAt
+    Datetime updatedAt
   }
-  class Promoter {
-    +int promoterID
-    +String name
-    +String description
+
+  class SocialLink {
+    int socialLinkID
+    int artistID
+    String platform
+    String url
   }
+
   class Customer {
-    +int customerID
-    +String username
-    +String email
-    +String name
+    int customerID
+    String username
+    String email
+    String displayName
+    Datetime createdAt
+    Datetime updatedAt
   }
+
+  class Promoter {
+    int promoterID
+    String name
+    String description
+    Datetime createdAt
+    Datetime updatedAt
+  }
+
   class Sale {
-    +int saleID
-    +Datetime saleDatetime
-    +double totalPrice
+    int saleID
+    Datetime saleDatetime
+    double totalPrice
+    String status
   }
+
+  class TicketType {
+    int ticketTypeID
+    int eventID
+    String name
+    double price
+    int capacity
+    Datetime salesStartDatetime
+    Datetime salesEndDatetime
+  }
+
   class Ticket {
-    +int ticketID
-    +String status
-    +String ticketType
-    +double price
+    int ticketID
+    int eventID
+    int ticketTypeID
+    int saleID
+    int ownerCustomerID
+    String status
+    double price
+    Datetime issuedAt
+    Datetime usedAt
   }
+
   class Venue {
-    +int venueID
-    +String name
-    +String address
-    +String city
-    +String country
-    +int capacity
-    +String description
+    int venueID
+    String name
+    String address
+    String city
+    String country
+    int capacity
+    String description
   }
+
   class VenueManager {
-    +int venueManagerID
-    +String email
-    +String firstName
-    +String lastName
+    int venueManagerID
+    String email
+    String firstName
+    String lastName
+    Datetime createdAt
+    Datetime updatedAt
   }
+
   class EventArtist {
-    +int eventID
-    +int artistID
+    int eventID
+    int artistID
+    Datetime setStartDatetime
+    Datetime setEndDatetime
+    int billingOrder
+    String role
   }
 
   class EventPromoter {
-    +int eventID
-    +int promoterID
+    int eventID
+    int promoterID
   }
 
   class CustomerArtistFollow {
-    +int customerID
-    +int artistID
-    +Datetime follow_date
+    int customerID
+    int artistID
+    Datetime followDate
   }
 
   class CustomerVenueFollow {
-    +int customerID
-    +int venue_id
-    +Datetime follow_date
+    int customerID
+    int venueID
+    Datetime followDate
   }
 
   class CustomerEventInterest {
-    +int customerID
-    +int eventID
-    +Datetime interest_date
+    int customerID
+    int eventID
+    Datetime interestDate
   }
-  Event "*" -- "1...*" Artist : hosts
-  Promoter "*" -- "*" Event : manages
+
   Customer "1" -- "*" Sale : places
   Sale "1" -- "1...*" Ticket : contains
   Customer "1" -- "*" Ticket : owns
   Event "1" -- "1...*" Ticket : issues
   Venue "1" -- "1...*" VenueManager : managed by
   Venue "1" -- "*" Event : hosts
-  Event "1" -- "*" EventArtist : features
-  Artist "1" -- "*" EventArtist : performs at
-  Event "1" -- "*" EventPromoter : promoted by
-  Promoter "1" -- "*" EventPromoter : promotes
   Customer "1" -- "*" CustomerArtistFollow : follows
   Artist "1" -- "*" CustomerArtistFollow : followed by
   Customer "1" -- "*" CustomerVenueFollow : follows
   Venue "1" -- "*" CustomerVenueFollow : followed by
   Customer "1" -- "*" CustomerEventInterest : interested in
   Event "1" -- "*" CustomerEventInterest : interests
+  Artist "1" -- "*" SocialLink : has
+  TicketType "1" -- "*" Ticket : categorises
+  Event "1" -- "*" TicketType : offers
+  Event "1" -- "*" EventArtist : features
+  Artist "1" -- "*" EventArtist : performs at
+  Event "1" -- "*" EventPromoter : promoted by
+  Promoter "1" -- "*" EventPromoter : promotes
 ```
